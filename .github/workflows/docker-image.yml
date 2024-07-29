@@ -1,4 +1,4 @@
- name: Docker Image CI
+name: Docker Image CI
 
 on:
   push:
@@ -10,9 +10,24 @@ jobs:
 
   build:
 
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest # Aqui se ejecutan todos los pasos
 
     steps:
-    - uses: actions/checkout@v4
-    - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
+    - name: Checkout code # Toma lo que tenemos en nuestro repositorio
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0 # Para que vaya bien adentro en la busqued de nuestro historial de commits.
+    
+    #  Autenticacion en DockerHub --> Generamos un nuevo token y ejecutamos el codigo con el usuario y ese token
+    - name: Docker login
+      env:
+        DOCKER_USER: ${{ secrets.DOCKER_USER }}
+        DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+
+      # '|' caracter que representa una tuberia. 
+      # Usualmente se lo usa cuando queremos trabajar con mas de una linea de codigo. Significa que cada una 
+      # de las lineas siguientes son lineas independientes que se ingresan manualmente en la consola
+      run: |
+        echo "Iniciando Login"
+        docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
+        echo "Fin del login"
