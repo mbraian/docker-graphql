@@ -17,17 +17,33 @@ jobs:
       uses: actions/checkout@v4
       with:
         fetch-depth: 0 # Para que vaya bien adentro en la busqued de nuestro historial de commits.
-    
+
+
     #  Autenticacion en DockerHub --> Generamos un nuevo token y ejecutamos el codigo con el usuario y ese token
     - name: Docker login
       env:
         DOCKER_USER: ${{ secrets.DOCKER_USER }}
         DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
 
+
       # '|' caracter que representa una tuberia. 
       # Usualmente se lo usa cuando queremos trabajar con mas de una linea de codigo. Significa que cada una 
-      # de las lineas siguientes son lineas independientes que se ingresan manualmente en la consola
+      # de las lineas siguientes son lineas independientes que se ingresan manualmente en la consola.
+      # Lo dejamos de onda
       run: |
-        echo "Iniciando Login"
         docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
-        echo "Fin del login"
+
+    - name: Build Docker Image
+      run: |
+        docker build -t mbraian/docker-graphql:0.0.2 .
+
+
+    - name: Push Docker Image
+      run: |
+        docker push mbraian/docker-graphql:0.0.2 .
+
+
+
+
+
+
