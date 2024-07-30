@@ -34,7 +34,6 @@ jobs:
       env:
         DOCKER_USER: ${{ secrets.DOCKER_USER }}
         DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-        NEW_VERSION: ${{ steps.version.outputs.version }} # Saca un ARRAY de diferentes valores; en este caso la version
 
         # '|' caracter que representa una tuberia. 
         # Usualmente se lo usa cuando queremos trabajar con mas de una linea de codigo. Significa que cada una 
@@ -45,16 +44,21 @@ jobs:
 
         echo "New version: $NEW_VERSION <==================================================="
 
-    # - name: Build Docker Image
-    #   run: |
-    #     docker build -t mbraian/docker-graphql:0.0.2 .
-    #     docker build -t mbraian/docker-graphql:latest .
+    - name: Build Docker Image
+      env:
+        NEW_VERSION: ${{ steps.version.outputs.version }} # Saca un ARRAY de diferentes valores; en este caso la version
+
+      run: |
+        docker build -t mbraian/docker-graphql:$NEW_VERSION .
+        docker build -t mbraian/docker-graphql:latest .
 
 
-    # - name: Push Docker Image
-    #   run: |
-    #     docker push mbraian/docker-graphql:0.0.2
-    #     docker push mbraian/docker-graphql:latest
+    - name: Push Docker Image
+      env:
+        NEW_VERSION: ${{ steps.version.outputs.version }} # Saca un ARRAY de diferentes valores; en este caso la version
+      run: |
+        docker push mbraian/docker-graphql:$NEW_VERSION
+        docker push mbraian/docker-graphql:latest
 
 
 
