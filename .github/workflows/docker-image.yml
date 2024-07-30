@@ -25,7 +25,7 @@ jobs:
       with:
         major_pattern: "major:" # Si se encuentra esto en alguna parte del commit, se hara una nueva version major
         minor_pattern: "feat:"
-        format: "${major}.${feat}.${patch}-prerelease${increment}" # Cada vez que sea llamada esta accion va a ir incrementando esto
+        format: "${major}.${minor}.${patch}-prerelease${increment}" # Cada vez que sea llamada esta accion va a ir incrementando esto
       id: version
 
 
