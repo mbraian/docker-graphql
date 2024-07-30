@@ -19,30 +19,42 @@ jobs:
         fetch-depth: 0 # Para que vaya bien adentro en la busqued de nuestro historial de commits.
 
 
+    # =================================    Versionamiento Semántico    ==============================================================
+    - name: Git Semantic Version
+      uses: PaulHatch/semantic-version@v4.0.3
+      with:
+        major_pattern: "major:" # Si se encuentra esto en alguna parte del commit, se hara una nueva version major
+        minor_pattern: "feat:"
+        format: "${major}.${feat}.${patch}-prerelease${increment}" # Cada vez que sea llamada esta accion va a ir incrementando esto
+      id: version
+
+
     #  Autenticacion en DockerHub --> Generamos un nuevo token y ejecutamos el codigo con el usuario y ese token
     - name: Docker login
       env:
         DOCKER_USER: ${{ secrets.DOCKER_USER }}
         DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        NEW_VERSION: ${{ steps.version.outputs.version }} # Saca un ARRAY de diferentes valores; en este caso la version
 
-
-      # '|' caracter que representa una tuberia. 
-      # Usualmente se lo usa cuando queremos trabajar con mas de una linea de codigo. Significa que cada una 
-      # de las lineas siguientes son lineas independientes que se ingresan manualmente en la consola.
-      # Lo dejamos de onda
+        # '|' caracter que representa una tuberia. 
+        # Usualmente se lo usa cuando queremos trabajar con mas de una linea de codigo. Significa que cada una 
+        # de las lineas siguientes son lineas independientes que se ingresan manualmente en la consola.
+        # Lo dejamos de onda
       run: |
         docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
 
-    - name: Build Docker Image
-      run: |
-        docker build -t mbraian/docker-graphql:0.0.2 .
-        docker build -t mbraian/docker-graphql:latest .
+        echo "New version: $NEW_VERSION <==================================================="
+
+    # - name: Build Docker Image
+    #   run: |
+    #     docker build -t mbraian/docker-graphql:0.0.2 .
+    #     docker build -t mbraian/docker-graphql:latest .
 
 
-    - name: Push Docker Image
-      run: |
-        docker push mbraian/docker-graphql:0.0.2
-        docker push mbraian/docker-graphql:latest
+    # - name: Push Docker Image
+    #   run: |
+    #     docker push mbraian/docker-graphql:0.0.2
+    #     docker push mbraian/docker-graphql:latest
 
 
 
